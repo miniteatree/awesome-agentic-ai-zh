@@ -68,7 +68,7 @@ jobs:
         run: python scripts/check-image-delivery.py --site _build/site
 
       - name: Verify rendered links, locale metadata, and public search
-        run: python scripts/check-rendered-site.py --site _build/site
+        run: python scripts/check-rendered-site.py --site _build/site --site-url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 
       - name: Install mdBook
         run: |
