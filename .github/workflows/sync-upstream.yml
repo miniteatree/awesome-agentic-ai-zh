@@ -1,0 +1,73 @@
+name: Sync upstream
+
+# Weekly: merge WenyuChiou/awesome-agentic-ai-zh@main into a sync branch and
+# open a PR for review. If the merge conflicts (e.g. upstream touched the
+# site_url / repo_url lines we changed), open an issue instead of failing silently.
+# Nothing lands on main without a human merging the PR.
+
+on:
+  schedule:
+    - cron: '41 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+env:
+  UPSTREAM: WenyuChiou/awesome-agentic-ai-zh
+
+jobs:
+  sync:
+    if: github.repository != 'WenyuChiou/awesome-agentic-ai-zh'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge upstream
+        id: merge
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream "https://github.com/${UPSTREAM}.git"
+          git fetch upstream main
+          if git merge-base --is-ancestor upstream/main HEAD; then
+            echo "status=uptodate" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git checkout -B sync/upstream
+          if git merge --no-edit upstream/main; then
+            echo "status=clean" >> "$GITHUB_OUTPUT"
+          else
+            git merge --abort
+            echo "status=conflict" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open PR
+        if: steps.merge.outputs.status == 'clean'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git push --force origin sync/upstream
+          if [ -z "$(gh pr list --head sync/upstream --state open --json number --jq '.[0].number')" ]; then
+            gh pr create --base main --head sync/upstream \
+              --title "Sync upstream ($(date -u +%F))" \
+              --body "Automated merge of \`${UPSTREAM}@main\`. Review, then merge."
+          fi
+
+      - name: Report conflict
+        if: steps.merge.outputs.status == 'conflict'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(gh issue list --state open --search 'Upstream sync conflict in:title' --json number --jq '.[0].number')" ]; then
+            gh issue create --title "Upstream sync conflict" \
+              --body "Merging \`${UPSTREAM}@main\` conflicts. Resolve locally: \`git fetch upstream && git merge upstream/main\`, then push."
+          fi

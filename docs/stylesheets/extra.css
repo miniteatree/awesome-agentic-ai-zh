@@ -229,3 +229,373 @@ body[data-md-color-scheme="slate"] {
 .md-typeset table:not([class]) tr:hover td {
   background: var(--md-default-fg-color--lightest);
 }
+
+/* ======================================================================
+/* awesome-agentic-ai-zh — long-form reading layer.
+   Appended at the END of extra.css (build-docs-tree.py whitelists only this
+   file, so a separate stylesheet would not ship). Additive: only touches
+   Material's CSS variables and generic .md-typeset elements. Keep this block
+   last so upstream edits above it merge cleanly.
+
+   Sections: 1 tokens · 2 palettes · 3 typography · 4 headings · 5 code ·
+   6 tables · 7 admonitions/quotes · 8 navigation · 9 landing · 10 mobile ·
+   11 a11y / motion */
+
+/* ---- 1. Tokens + CJK font stack ---------------------------------------- */
+:root {
+  /* System CJK fonts only (theme.font is false → no Google Fonts request).
+     Latin first so digits/code-ish words stay crisp, then per-script CJK. */
+  --aaz-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    "PingFang TC", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK TC",
+    "Noto Sans CJK SC", "Microsoft JhengHei", "Microsoft YaHei", sans-serif;
+  --aaz-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas,
+    "Liberation Mono", "PingFang TC", "Noto Sans CJK TC", monospace;
+  --md-text-font-family: var(--aaz-sans);
+  --md-code-font-family: var(--aaz-mono);
+
+  --aaz-radius: 10px;
+  --aaz-measure: 46rem;          /* readable column when no sidebars */
+  --aaz-leading: 1.85;           /* CJK needs more air than Latin 1.6 */
+}
+:root:lang(zh-TW), [lang="zh-TW"] {
+  --md-text-font-family: "PingFang TC", "Noto Sans CJK TC", "Microsoft JhengHei",
+    var(--aaz-sans);
+}
+:root:lang(zh), [lang="zh"], [lang="zh-Hans"] {
+  --md-text-font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei",
+    var(--aaz-sans);
+}
+
+/* ---- 2. Palettes (light + dark) ---------------------------------------- */
+/* mkdocs.yml uses primary/accent: custom, so these actually apply. */
+:root,
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        #4338ca;
+  --md-primary-fg-color--light: #6366f1;
+  --md-primary-fg-color--dark:  #3730a3;
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, .8);
+  --md-accent-fg-color:         #4338ca;
+  --md-accent-fg-color--transparent: rgba(67, 56, 202, .1);
+  --md-accent-bg-color:         #ffffff;
+
+  --md-default-fg-color:          #1b1f2a;
+  --md-default-fg-color--light:   #4b5263;   /* 7.6:1 on white (was 4.6:1) */
+  --md-default-fg-color--lighter: #8a90a0;
+  --md-default-fg-color--lightest:#f1f2f7;
+  --md-typeset-color:             #1b1f2a;
+  --md-typeset-a-color:           #4338ca;
+
+  --aaz-surface:  #f6f7fb;
+  --aaz-border:   #e1e4ee;
+  --aaz-code-bg:  #f4f5fa;
+  --aaz-quote-bg: #f5f4ff;
+}
+[data-md-color-scheme="slate"] {
+  --md-hue: 232;
+  --md-primary-fg-color:        #1c2030;
+  --md-primary-fg-color--light: #2a3045;
+  --md-primary-fg-color--dark:  #14172a;
+  --md-primary-bg-color:        #e8eaf6;
+  --md-primary-bg-color--light: rgba(232, 234, 246, .75);
+  --md-accent-fg-color:         #a5b4fc;
+  --md-accent-fg-color--transparent: rgba(165, 180, 252, .12);
+
+  --md-default-bg-color:          #12141d;
+  --md-default-fg-color:          #e6e8f2;
+  --md-default-fg-color--light:   #b4b9cc;   /* 9:1 on bg (was ~5.6:1) */
+  --md-default-fg-color--lighter: #6f7590;
+  --md-default-fg-color--lightest:#1d2130;
+  --md-typeset-color:             #e6e8f2;
+  --md-typeset-a-color:           #a5b4fc;
+  --md-code-bg-color:             #1a1e2d;
+  --md-code-fg-color:             #e6e8f2;
+
+  --aaz-surface:  #181b28;
+  --aaz-border:   #2b3044;
+  --aaz-code-bg:  #1a1e2d;
+  --aaz-quote-bg: #1a1d2e;
+}
+
+/* ---- 3. Body typography ------------------------------------------------- */
+.md-typeset {
+  font-size: .82rem;
+  line-height: var(--aaz-leading);
+  letter-spacing: .015em;
+  line-break: strict;              /* proper CJK punctuation kinsoku */
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+}
+.md-typeset p,
+.md-typeset ul,
+.md-typeset ol,
+.md-typeset dl { margin-block: 1em; }
+.md-typeset li { margin-block: .25em; }
+.md-typeset li > p { margin-block: .5em; }
+.md-typeset strong { font-weight: 650; }
+.md-typeset hr { border-color: var(--aaz-border); margin-block: 2.2em; }
+.md-typeset a:not(.md-button):not(.headerlink) {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: .2em;
+  transition: text-decoration-color .15s ease;
+}
+.md-typeset a:not(.md-button):not(.headerlink):hover {
+  text-decoration-color: currentColor;
+}
+
+/* Landing page and other sidebar-less pages: keep prose to a readable
+   measure instead of ~70 CJK chars per line. Cards / tables / hero stay wide. */
+.md-main__inner:has(> .md-sidebar--secondary[hidden]) .md-content__inner > :is(p, ul, ol, h2, h3, h4, blockquote, details, .admonition) {
+  max-width: var(--aaz-measure);
+  margin-inline: auto;
+}
+
+/* ---- 4. Heading hierarchy ----------------------------------------------- */
+.md-typeset h1 {
+  color: var(--md-default-fg-color);   /* Material default is a washed-out grey */
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.35;
+  margin: 0 0 1.2rem;
+}
+.md-typeset h2 {
+  border-block-start: 1px solid var(--aaz-border);
+  font-size: 1.45em;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.4;
+  margin: 2.6em 0 .8em;
+  padding-block-start: 1.1em;
+}
+.md-typeset h1 + h2,
+.md-typeset h2:first-child { border-block-start: 0; padding-block-start: 0; margin-block-start: 1.6em; }
+.md-typeset h3 {
+  font-size: 1.15em;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.45;
+  margin: 2em 0 .6em;
+}
+.md-typeset h4 {
+  color: var(--md-default-fg-color--light);
+  font-size: 1em;
+  font-weight: 650;
+  letter-spacing: .02em;
+  margin: 1.6em 0 .5em;
+}
+.md-typeset :is(h2, h3, h4, h5)[id] { scroll-margin-top: 4.5rem; }
+.md-typeset .headerlink { margin-inline-start: .4em; }
+
+/* ---- 5. Code ------------------------------------------------------------ */
+.md-typeset code,
+.md-typeset pre {
+  font-family: var(--md-code-font-family);
+  letter-spacing: 0;
+}
+.md-typeset :not(pre) > code {
+  background: var(--aaz-code-bg);
+  border: 1px solid var(--aaz-border);
+  border-radius: 5px;
+  font-size: .86em;
+  padding: .08em .4em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.md-typeset .highlight,
+.md-typeset pre > code { border-radius: var(--aaz-radius); }
+.md-typeset .highlight {
+  border: 1px solid var(--aaz-border);
+  margin-block: 1.25em;
+}
+.md-typeset .highlight pre,
+.md-typeset pre > code {
+  background: var(--aaz-code-bg);
+}
+.md-typeset pre > code {
+  font-size: .76rem;
+  line-height: 1.7;
+  padding: 1em 1.2em;
+}
+.md-typeset pre > code::-webkit-scrollbar { height: .45rem; }
+.md-typeset pre > code::-webkit-scrollbar-thumb {
+  background: var(--md-default-fg-color--lighter);
+  border-radius: 4px;
+}
+.md-clipboard { color: var(--md-default-fg-color--light); }
+
+/* ---- 6. Tables ---------------------------------------------------------- */
+.md-typeset__scrollwrap { margin-block: 1.25em; }
+.md-typeset__table { display: block; }
+.md-typeset table:not([class]) {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--aaz-border);
+  border-radius: var(--aaz-radius);
+  box-shadow: none;
+  font-size: .76rem;
+  line-height: 1.65;
+}
+.md-typeset table:not([class]) th {
+  border-block-end: 2px solid var(--aaz-border);
+  color: var(--md-default-fg-color);
+  font-weight: 650;
+  letter-spacing: .01em;
+  min-width: 5rem;
+  padding: .7em .9em;
+  vertical-align: bottom;
+}
+.md-typeset table:not([class]) td {
+  border-block-start: 1px solid var(--aaz-border);
+  padding: .7em .9em;
+  vertical-align: top;
+}
+.md-typeset table:not([class]) tbody tr:nth-child(even) td { background: var(--aaz-surface); }
+.md-typeset table:not([class]) tbody tr:hover td { background: var(--md-accent-fg-color--transparent); }
+.md-typeset table:not([class]) :is(td, th) > code { white-space: normal; }
+
+/* ---- 7. Admonitions, details, quotes ------------------------------------ */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: var(--aaz-radius);
+  border-width: 1px;
+  border-inline-start-width: 4px;
+  box-shadow: none;
+  font-size: .8rem;
+  margin-block: 1.5em;
+}
+.md-typeset .admonition-title,
+.md-typeset summary { font-weight: 650; padding-block: .6em; }
+.md-typeset .admonition > :not(.admonition-title):last-child { margin-block-end: .9em; }
+.md-typeset blockquote {
+  background: var(--aaz-quote-bg);
+  border-inline-start: 4px solid var(--md-primary-fg-color--light);
+  border-radius: 0 var(--aaz-radius) var(--aaz-radius) 0;
+  color: var(--md-default-fg-color);   /* Material greys it out → low contrast in dark */
+  margin: 1.4em 0;
+  padding: .6em 1.1em;
+}
+.md-typeset blockquote > :first-child { margin-block-start: .3em; }
+.md-typeset blockquote > :last-child { margin-block-end: .3em; }
+.md-typeset kbd { border-radius: 5px; }
+
+/* ---- 8. Navigation + TOC ------------------------------------------------ */
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs { box-shadow: 0 1px 0 var(--aaz-border); }
+.md-tabs__link { font-size: .72rem; opacity: .85; }
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link:hover { opacity: 1; }
+.md-nav { font-size: .72rem; line-height: 1.55; }
+.md-nav__title { font-weight: 700; }
+.md-nav--primary .md-nav__link,
+.md-nav--secondary .md-nav__link { margin-block-start: .4em; }
+.md-nav__link--active,
+.md-nav__item .md-nav__link--active { font-weight: 650; }
+.md-nav--secondary .md-nav__link--active {
+  border-inline-start: 2px solid var(--md-accent-fg-color);
+  margin-inline-start: -.6rem;
+  padding-inline-start: .55rem;
+}
+.md-sidebar { padding-block-start: 1.2rem; }
+/* The edit-pencil floats next to the H1; keep it quiet. */
+.md-content__button { opacity: .5; transition: opacity .15s ease; }
+.md-content__button:hover { opacity: 1; }
+.md-footer-meta { font-size: .68rem; }
+.md-footer__link { font-size: .75rem; }
+
+/* ---- 9. Landing page ---------------------------------------------------- */
+.aaz-hero {
+  background:
+    radial-gradient(60rem 18rem at 50% -4rem, var(--md-accent-fg-color--transparent), transparent 70%);
+  border: 1px solid var(--aaz-border);
+  border-radius: calc(var(--aaz-radius) * 2);
+  margin-block: 1.2rem 1.5rem;
+  padding: 2.8rem 1.25rem 2rem;
+}
+.md-typeset .aaz-hero h1 {
+  font-size: 2.5rem;
+  letter-spacing: -.01em;
+  line-height: 1.25;
+  margin: .5rem 0 .4rem;
+}
+.aaz-hero .aaz-tagline {
+  color: var(--md-default-fg-color--light);
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+.aaz-hero .aaz-repo { color: var(--md-default-fg-color--light); }
+.aaz-stat {
+  background: var(--aaz-surface);
+  border: 1px solid var(--aaz-border);
+}
+.aaz-stat .aaz-num { color: var(--md-accent-fg-color); }
+.aaz-stat .aaz-lbl { color: var(--md-default-fg-color--light); }
+.md-typeset .grid.cards > ul { gap: 1rem; }
+.md-typeset .grid.cards > ul > li {
+  background: var(--aaz-surface);
+  border-color: var(--aaz-border);
+  padding: 1rem 1.1rem;
+}
+.md-typeset .grid.cards > ul > li > p { margin-block: .5em; }
+.md-typeset .md-button {
+  font-weight: 650;
+  letter-spacing: .01em;
+}
+.md-typeset .md-button--primary {
+  background: var(--md-primary-fg-color);
+  border-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}
+[data-md-color-scheme="slate"] .md-typeset .md-button--primary {
+  background: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+  color: #12141d;
+}
+.md-typeset .md-button:not(.md-button--primary) {
+  color: var(--md-typeset-a-color);
+  border-color: var(--md-typeset-a-color);
+}
+
+/* ---- 10. Tablet / mobile ------------------------------------------------ */
+@media (max-width: 76.1875em) {            /* drawer nav kicks in */
+  .md-typeset h1 { font-size: 1.75rem; }
+}
+@media (max-width: 47.99em) {
+  .md-typeset { font-size: .85rem; line-height: 1.8; }
+  .md-content__inner { margin-inline: .9rem; margin-block-end: 1rem; }
+  .md-typeset h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+  .md-typeset h2 { font-size: 1.3em; margin-top: 2.2em; }
+  .md-typeset h3 { font-size: 1.1em; }
+  .md-typeset .aaz-hero h1 { font-size: 1.85rem; }
+  .aaz-hero { padding: 1.8rem .9rem 1.4rem; }
+  .aaz-hero .aaz-tagline { font-size: 1rem; }
+  .md-typeset pre > code { font-size: .72rem; padding: .85em .9em; }
+  .md-typeset table:not([class]) { font-size: .72rem; }
+  .md-typeset table:not([class]) :is(th, td) { padding: .6em .65em; }
+  .md-typeset .admonition,
+  .md-typeset details { font-size: .78rem; }
+  .md-typeset .grid.cards > ul { grid-template-columns: 1fr; }
+}
+
+/* ---- 11. Accessibility + motion ----------------------------------------- */
+.md-typeset a:focus-visible,
+.md-nav__link:focus-visible,
+.md-tabs__link:focus-visible,
+.md-button:focus-visible,
+.md-search__input:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .grid.cards > ul > li,
+  .md-typeset a,
+  .md-content__button { transition: none; }
+  .md-typeset .grid.cards > ul > li:hover { transform: none; }
+}
+@media print {
+  .md-typeset { font-size: 11pt; line-height: 1.7; }
+  .aaz-hero { background: none; border: 0; }
+}
+

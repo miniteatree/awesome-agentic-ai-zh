@@ -1,6 +1,6 @@
 site_name: awesome-agentic-ai-zh
 site_description: A trilingual 10-stop learning roadmap for agentic AI (English / 繁中 / 简中) — 8 topic stages plus Stage 0 readiness and the Stage 7.5 reading stop, with hands-on exercises and curated projects.
-site_url: https://wenyuchiou.github.io/awesome-agentic-ai-zh/
+site_url: https://miniteatree.github.io/awesome-agentic-ai-zh/
 repo_url: https://github.com/WenyuChiou/awesome-agentic-ai-zh
 repo_name: WenyuChiou/awesome-agentic-ai-zh
 edit_uri: edit/main/
@@ -26,6 +26,8 @@ exclude_docs: |
 theme:
   name: material
   language: zh-TW
+  # System CJK stack is defined at the end of extra.css; false = no Google Fonts request.
+  font: false
   features:
     - navigation.tabs
     - navigation.top
@@ -46,15 +48,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: 切換深色 / Dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: 切換淺色 / Light mode
@@ -160,7 +162,7 @@ nav:
   - 進度: PROGRESS.md
   - 結業專題: CAPSTONE.md
   - 路線圖: ROADMAP.md
-  - 書本版: https://wenyuchiou.github.io/awesome-agentic-ai-zh/book/
+  - 書本版: https://miniteatree.github.io/awesome-agentic-ai-zh/book/
   - 共用基礎:
       - Stage 0 — Foundations: stages/00-foundations.md
       - Stage 1 — LLM Basics:
